@@ -25,6 +25,10 @@ def one_convert(fname):
 	except:
 		pass
 
+def File_Rename(fName):
+	if '_#x{}'.format(sys.argv[2]) in fName:
+		os.rename(fName, fName.replace('_#x{}'.format(sys.argv[2]), ''))
+
 def DetectDirectorys(ListFiles, rootdir):
 	Dirs = []
 	File = []
@@ -43,8 +47,11 @@ def WorkFiles(FilesLists):
 	returnpathsub = ['']
 	WorkPath = os.getcwd()
 	for Files2 in FilesLists:
-		if not '_#x' in Files2:
+		if not '_#x{}'.format(sys.argv[2]) in Files2:
 			one_convert(Files2)
+	for Files3 in DetectDirectorys(os.listdir(), os.getcwd())[1]:
+		if '_#x{}'.format(sys.argv[2]) in Files3:
+			File_Rename(Files3)
 	while True:
 		if not ''.join(DetectDirectorys(os.listdir(), os.getcwd())[0]) == '':
 			if not d_back == os.getcwd():
@@ -104,15 +111,20 @@ def WorkFiles(FilesLists):
 														print('[{}] Path: {}'.format(E, os.getcwd()))
 														sys.exit(0)
 						for F in DetectDirectorys(os.listdir(), os.getcwd())[1]:
-							if not '_#x' in F:
+							if not '_#x{}'.format(sys.argv[2]) in F:
 								one_convert(F)
+						for Fr in DetectDirectorys(os.listdir(), os.getcwd())[1]:
+							if '_#x{}'.format(sys.argv[2]) in Fr:
+								File_Rename(F)
 						try:
 							os.chdir(os.getcwd().replace(os.getcwd().split('/')[-1], ''))
 						except FileNotFoundError:
 							os.chdir('../')
 					else:
-						if not '_#x' in subs:
+						if not '_#x{}'.format(sys.argv[2]) in subs:
 							one_convert(subs)
+						elif '_#x{}'.format(sys.argv[2]) in subs:
+							File_Rename(subs)
 					try:
 						os.chdir(os.getcwd().replace(os.getcwd().split('/')[-1], ''))
 					except FileNotFoundError:
@@ -130,9 +142,13 @@ def RecursiveDirectory(f):
 		sys.argv[1] = '.'
 	pPath = os.getcwd()
 	for DetectFile in DetectDirectorys(os.listdir(), os.getcwd())[1]:
-		if not '_#x' in DetectFile:
+		if not '_#x{}'.format(sys.argv[2]) in DetectFile:
 			if os.path.isfile(DetectFile):
 				one_convert(DetectFile)
+	for Frs in DetectDirectorys(os.listdir(), os.getcwd())[1]:
+		if '_#x{}'.format(sys.argv[2]) in Frs:
+			if os.path.isfile(Frs):
+				File_Rename(Frs)
 	for i in DetectDirectorys(f, pPath)[0]:
 		if os.path.isdir(i):
 			os.chdir(i)
