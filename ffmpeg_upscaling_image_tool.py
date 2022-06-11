@@ -1,29 +1,53 @@
 ﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys, glob, os, os.path, shutil, pathlib
+import sys, glob, os, shutil, pathlib
 
 currentdir = os.getcwd()
 
 def one_convert(fname):
 	if fname.split('.')[-1].lower() == 'png':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{}_#x{}.png'.format(fname.split('.')[0], sys.argv[2])))
+		try:
+			os.remove(fname)
+		except:
+			pass
 	elif fname.split('.')[-1].lower() == 'jpg':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{}_#x{}.png'.format(fname.split('.')[0], sys.argv[2])))
+		try:
+			os.remove(fname)
+		except:
+			pass
 	elif fname.split('.')[-1].lower() == 'jpeg':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{}_#x{}.png'.format(fname.split('.')[0], sys.argv[2])))
+		try:
+			os.remove(fname)
+		except:
+			pass
 	elif fname.split('.')[-1].lower() == 'gif':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{}_#x{}.png'.format(fname.split('.')[0], sys.argv[2])))
+		try:
+			os.remove(fname)
+		except:
+			pass
 	elif fname.split('.')[-1].lower() == 'tiff':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{}_#x{}.png'.format(fname.split('.')[0], sys.argv[2])))
+		try:
+			os.remove(fname)
+		except:
+			pass
 	elif fname.split('.')[-1].lower() == 'bmp':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{}_#x{}.png'.format(fname.split('.')[0], sys.argv[2])))
+		try:
+			os.remove(fname)
+		except:
+			pass
 	elif fname.split('.')[-1].lower() == 'rgb':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{}_#x{}.png'.format(fname.split('.')[0], sys.argv[2])))
-	try:
-		os.remove(fname)
-	except:
-		pass
+		try:
+			os.remove(fname)
+		except:
+			pass
 
 def File_Rename(fName):
 	if '_#x{}'.format(sys.argv[2]) in fName:
@@ -52,8 +76,8 @@ def WorkFiles(FilesLists):
 	for Files3 in DetectDirectorys(os.listdir(), os.getcwd())[1]:
 		if '_#x{}'.format(sys.argv[2]) in Files3:
 			File_Rename(Files3)
-	while True:
-		if not ''.join(DetectDirectorys(os.listdir(), os.getcwd())[0]) == '':
+	for Num in range(FilesNumbar):
+		if not FilesNumbar+1 == Num:
 			if not d_back == os.getcwd():
 				for subs in DetectDirectorys(os.listdir(), os.getcwd())[0]:
 					if not os.path.isfile(subs):
@@ -130,12 +154,12 @@ def WorkFiles(FilesLists):
 					except FileNotFoundError:
 						try:
 							os.chdir('../')
+						except PermissionError:
+							os.chdir(WorkPath)
 						except:
 							os.chdir(WorkPath)
-			else:
-					break
-		else:
-			break
+					except PermissionError:
+						os.chdir(d_back)
 
 def RecursiveDirectory(f):
 	if sys.argv[1] == './':
@@ -165,7 +189,7 @@ def RecursiveDirectory(f):
 	print('\nDone!')
 
 def main():
-	global d_back
+	global d_back, FilesNumbar
 	try:
 			if sys.argv[1] == '-h':
 				print('{} [input_directory] [scale_value(example: 3)]'.format(sys.argv[0].split('/')[-1]))
@@ -185,6 +209,7 @@ def main():
 		pass
 	os.chdir(output_dir)
 	d_back = os.getcwd()
+	FilesNumbar = len(list(pathlib.Path(d_back).glob('**/*')))
 	RecursiveDirectory(FilesList)
 
 if __name__ == '__main__':
