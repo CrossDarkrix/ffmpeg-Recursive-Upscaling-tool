@@ -47,6 +47,10 @@ def one_convert(fname):
 		except:
 			pass
 
+def File_Rename(fName):
+	if ' (x{})'.format(sys.argv[2]) in fName:
+		os.rename(fName, fName.replace(' (x{})'.format(sys.argv[2]), ''))
+
 def Find_All_Files(Dir):
 	for r, Dirs, File, in os.walk(Dir):
 		yield r
@@ -64,8 +68,6 @@ def main():
 	except IndexError:
 			print('{} [input_directory] [scale_value(example: 3)]'.format(sys.argv[0].split('/')[-1]))
 			sys.exit(0)
-
-	FilesList = os.listdir(sys.argv[1])
 	output_dir = '{}(scale_{}.000x)'.format(sys.argv[1], sys.argv[2])
 	try:
 		shutil.copytree(sys.argv[1], output_dir)
@@ -73,25 +75,32 @@ def main():
 		pass
 	os.chdir(output_dir)
 	workpath = os.getcwd()
-	for Files2 in Find_All_Files('./'):
-		Files2 = '{}'.format(Files2.replace('./', workpath+'/'))
+	for Files2 in Find_All_Files(os.curdir):
 		try:
-			try:
-				os.chdir('{}'.format(Files2.replace(Files2.split('/')[-1:][0], '')))
-			except FileNotFoundError:
-				for pp in pathlib.Path(os.getcwd()).glob('{}'.format(Files2.replace(Files2.split('/')[-1:][0], '')).split('/')[-2]):
-					if os.path.isdir(pp):
-						os.chdir(pp)
-						break
-					elif os.path.islink(pp):
-						os.chdir(os.path.realpath(pp))
-					elif os.path.isfile(pp):
-						continue
+			if os.path.exists(os.path.dirname(Files2)):
+				os.chdir(os.path.dirname(Files2))
+			else:
+				os.chdir(os.path.dirname(os.path.abspath(Files2)))
 		except Exception as E:
 			print(E)
 			sys.exit(1)
 		if not '(x{})'.format(sys.argv[2]) in Files2.split('/')[-1:][0]:
 			one_convert(Files2.split('/')[-1])
+		os.chdir(workpath)
+	for Files3 in Find_All_Files(workpath):
+		try:
+			if os.path.exists(os.path.dirname(Files3)):
+				os.chdir(os.path.dirname(Files3))
+			else:
+				os.chdir(os.path.dirname(os.path.abspath(Files3)))
+		except Exception as E:
+			print(E)
+			sys.exit(1)
+		try:
+			File_Rename(Files3.split('/')[-1])
+		except Exception as Err:
+			print('Error: {}'.format(Err))
+			sys.exit(1)
 		os.chdir(workpath)
 	print('\nDone!')
 
