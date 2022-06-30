@@ -1,51 +1,51 @@
 ﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os, pathlib, shutil, sys
+import os, shutil, sys
 
-def one_convert(fname):
+def convert(fname):
 	if fname.split('.')[-1].lower() == 'png':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
-			pass
+			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'jpg':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
-			pass
+			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'jpeg':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
-			pass
+			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'gif':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
-			pass
+			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'tiff':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
-			pass
+			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'bmp':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
-			pass
+			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'rgb':
 		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
-			pass
+			print('Error! Old File Not Removed!')
 
 def File_Rename(fName):
 	if ' (x{})'.format(sys.argv[2]) in fName:
@@ -68,41 +68,32 @@ def main():
 	except IndexError:
 			print('{} [input_directory] [scale_value(example: 3)]'.format(sys.argv[0].split('/')[-1]))
 			sys.exit(0)
+
 	output_dir = '{}(scale_{}.000x)'.format(sys.argv[1], sys.argv[2])
 	try:
 		shutil.copytree(sys.argv[1], output_dir)
 	except:
-		pass
+		print('Error! Folder not Created!')
+		sys.exit(1)
 	os.chdir(output_dir)
 	workpath = os.getcwd()
 	for Files2 in Find_All_Files(os.curdir):
-		try:
-			if os.path.exists(os.path.dirname(Files2)):
-				os.chdir(os.path.dirname(Files2))
-			else:
-				os.chdir(os.path.dirname(os.path.abspath(Files2)))
-		except Exception as E:
-			print(E)
-			sys.exit(1)
+		if os.path.exists(os.path.dirname(Files2)):
+			os.chdir(os.path.dirname(Files2))
+		else:
+			os.chdir(os.path.dirname(os.path.abspath(Files2)))
 		if not '(x{})'.format(sys.argv[2]) in Files2.split('/')[-1:][0]:
-			one_convert(Files2.split('/')[-1])
+			convert(Files2.split('/')[-1])
 		os.chdir(workpath)
 	for Files3 in Find_All_Files(workpath):
-		try:
-			if os.path.exists(os.path.dirname(Files3)):
-				os.chdir(os.path.dirname(Files3))
-			else:
-				os.chdir(os.path.dirname(os.path.abspath(Files3)))
-		except Exception as E:
-			print(E)
-			sys.exit(1)
-		try:
-			File_Rename(Files3.split('/')[-1])
-		except Exception as Err:
-			print('Error: {}'.format(Err))
-			sys.exit(1)
+		if os.path.exists(os.path.dirname(Files3)):
+			os.chdir(os.path.dirname(Files3))
+		else:
+			os.chdir(os.path.dirname(os.path.abspath(Files3)))
+		File_Rename(Files3.split('/')[-1])
 		os.chdir(workpath)
-	print('\nDone!')
+
+	print('\nConverting Done!')
 
 if __name__ == '__main__':
 	main()
