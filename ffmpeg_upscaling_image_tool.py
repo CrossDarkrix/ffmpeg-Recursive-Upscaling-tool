@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""
+CommandName: ffmupimg
+ScriptName: ffmpeg_upscaling_image_tool.py
+Description: Auto image Resizing tool
+Author: DarkRix
+"""
+
 import os, shutil, sys, locale
 
 try:
