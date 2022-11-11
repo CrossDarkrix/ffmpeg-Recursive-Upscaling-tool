@@ -6,50 +6,50 @@ CommandName: ffmupimg
 ScriptName: ffmpeg_upscaling_image_tool.py
 Description: Auto image Resizing tool
 Author: DarkRix
-Version: 2.0
+Version: 2.1
 """
 
 import os, shutil, sys
 
 def convert(fname):
 	if fname.split('.')[-1].lower() == 'png':
-		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
+		os.system('ffmpeg -hide_banner -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
 			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'jpg':
-		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
+		os.system('ffmpeg -hide_banner -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
 			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'jpeg':
-		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
+		os.system('ffmpeg -hide_banner -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
 			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'gif':
-		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
+		os.system('ffmpeg -hide_banner -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
 			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'tiff':
-		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
+		os.system('ffmpeg -hide_banner -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
 			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'bmp':
-		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
+		os.system('ffmpeg -hide_banner -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
 			print('Error! Old File Not Removed!')
 	elif fname.split('.')[-1].lower() == 'rgb':
-		os.system('ffmpeg -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
+		os.system('ffmpeg -hide_banner -i "{}" -vf scale=iw*{}:ih*{} "{}"'.format(fname, sys.argv[2], sys.argv[2], '{} (x{}).png'.format(fname.split('.')[0], sys.argv[2])))
 		try:
 			os.remove(fname)
 		except:
