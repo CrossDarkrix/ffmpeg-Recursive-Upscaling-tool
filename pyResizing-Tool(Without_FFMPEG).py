@@ -1,121 +1,82 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-import os, shutil, sys
+import concurrent.futures
+import os
+import shutil
+import sys
 from PIL import Image
 from PIL import ImageFilter
 
-def convert(fname):
-    if fname.split('.')[-1].lower() == 'png':
-        img = Image.open(fname).convert('RGBA')
-        try:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.Resampling.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        except AttributeError:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        try:
-            os.remove(fname)
-        except:
-            print('Error! Old File Not Removed!')
-    elif fname.split('.')[-1].lower() == 'jpg':
-        img = Image.open(fname).convert('RGBA')
-        try:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.Resampling.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        except AttributeError:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        try:
-            os.remove(fname)
-        except:
-            print('Error! Old File Not Removed!')
-    elif fname.split('.')[-1].lower() == 'jpeg':
-        img = Image.open(fname).convert('RGBA')
-        try:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.Resampling.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        except AttributeError:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        try:
-            os.remove(fname)
-        except:
-            print('Error! Old File Not Removed!')
-    elif fname.split('.')[-1].lower() == 'tiff':
-        img = Image.open(fname).convert('RGBA')
-        try:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.Resampling.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        except AttributeError:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        try:
-            os.remove(fname)
-        except:
-            print('Error! Old File Not Removed!')
-    elif fname.split('.')[-1].lower() == 'bmp':
-        img = Image.open(fname).convert('RGBA')
-        try:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.Resampling.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        except AttributeError:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))    
-        try:
-            os.remove(fname)
-        except:
-            print('Error! Old File Not Removed!')
-    elif fname.split('.')[-1].lower() == 'rgb':
-        img = Image.open(fname).convert('RGBA')
-        try:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.Resampling.LANCZOS).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        except AttributeError:
-            img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2]))), Image.LANCZOS).filter(ImageFilter.MedianFilter()) .save('{} (x{}).png'.format(fname.split('.')[0], sys.argv[2]))
-        try:
-            os.remove(fname)
-        except:
-            print('Error! Old File Not Removed!')
+class ConvertImage(object):
+    def __init__(self, path):
+        self.path = path
+        self.imagelist = []
+        self.filelist = []
+        self.acceptfile = ('.jpg', '.jpeg', '.png', '.bmp', '.gif', '.rgb', '.tiff', '.xbm', '.pbm', '.pgm', '.ppm')
 
-def File_Rename(fName):
-    if ' (x{})'.format(sys.argv[2]) in fName:
-        os.rename(fName, fName.replace(' (x{})'.format(sys.argv[2]), ''))
+    def listfiles(self):
+        for root, dirs, files in os.walk(self.path):
+            for file in files:
+                if file.lower().endswith(self.acceptfile):
+                    yield os.path.join(root, file)
 
-def Find_All_Files(Dir):
-    for r, Dirs, File, in os.walk(Dir):
-        yield r
-        for F in File:
-            yield os.path.join(r, F)
+    def listupfiles(self):
+        self.imagelist = sorted([files for files in self.listfiles()])
+        return [Image.open(file).convert('RGBA') for file in self.imagelist]
+
+    def convert(self):
+        thread = concurrent.futures.ThreadPoolExecutor(os.cpu_count()*999999)
+        images = thread.submit(self.listupfiles)
+        thread.shutdown()
+        self.filelist = images.result()
+        for index, img in enumerate(self.filelist):
+            try:
+                img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2])))).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(self.imagelist[index].split('.')[0], sys.argv[2]))
+            except:
+                img.resize((img.width * round(float(sys.argv[2])), img.height * round(float(sys.argv[2])))).filter(ImageFilter.MedianFilter()).save('{} (x{}).png'.format(self.imagelist[index].split('.')[0], sys.argv[2]))
+            try:
+                os.remove(self.imagelist[index])
+            except:
+                print('Error! Old File Not Removed!')
+
+class RenameImage(object):
+    def __init__(self, path):
+        self.path = path
+
+    def rename(self):
+        for root, dirs, files in os.walk(self.path):
+            for file in files:
+                if ' (x{})'.format(sys.argv[2]):
+                    newName = file.replace(' (x{})'.format(sys.argv[2]), '')
+                    os.rename(os.path.join(root, file), os.path.join(root, newName))
+
+    def run(self):
+        work = concurrent.futures.ThreadPoolExecutor(os.cpu_count()*9999999)
+        work.submit(self.rename)
+        work.shutdown()
+        print('\nConverting Done!')
 
 def main():
     try:
-            if sys.argv[1] == '-h':
-                print('{} [input_directory] [scale_value(example: 3)]'.format(sys.argv[0].split('/')[-1]))
-                sys.exit(0)
-            elif sys.argv[1] == '--help':
-                print('{} [input_directory] [scale_value(example: 3)]'.format(sys.argv[0].split('/')[-1]))
-                sys.exit(0)
-    except IndexError:
+        if sys.argv[1] == '-h':
             print('{} [input_directory] [scale_value(example: 3)]'.format(sys.argv[0].split('/')[-1]))
             sys.exit(0)
-
-    output_dir = '{}(scale_{}.000x)'.format(sys.argv[1], sys.argv[2])
+        if sys.argv[1] == '--help':
+            print('{} [input_directory] [scale_value(example: 3)]'.format(sys.argv[0].split('/')[-1]))
+            sys.exit(0)
+    except IndexError:
+        print('{} [input_directory] [scale_value(example: 3)]'.format(sys.argv[0].split('/')[-1]))
+        sys.exit(0)
+    output_dir = '{}(scale_{}x)'.format(sys.argv[1], sys.argv[2])
     try:
         shutil.copytree(sys.argv[1], output_dir)
     except:
         print('Error! Folder not Created!')
         sys.exit(1)
     os.chdir(output_dir)
-    workpath = os.getcwd()
-    print('Please Wait.....................')
-    for Files2 in Find_All_Files(os.curdir):
-        if os.path.exists(os.path.dirname(Files2)):
-            os.chdir(os.path.dirname(Files2))
-        else:
-            os.chdir(os.path.dirname(os.path.abspath(Files2)))
-        if not '(x{})'.format(sys.argv[2]) in Files2.split('/')[-1:][0]:
-            convert(Files2.split('/')[-1])
-        os.chdir(workpath)
-    for Files3 in Find_All_Files(workpath):
-        if os.path.exists(os.path.dirname(Files3)):
-            os.chdir(os.path.dirname(Files3))
-        else:
-            os.chdir(os.path.dirname(os.path.abspath(Files3)))
-        File_Rename(Files3.split('/')[-1])
-        os.chdir(workpath)
-
-    print('\nConverting Done!')
+    ConvertImage(os.getcwd()).convert()
+    RenameImage(os.getcwd()).run()
 
 if __name__ == '__main__':
     main()
-
